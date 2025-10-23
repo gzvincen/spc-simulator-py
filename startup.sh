@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+conda activate spc-simulator
+
 set -Eeuo pipefail
 
 #if [ $# = 0 ]; then
