@@ -1,0 +1,81 @@
+#!/usr/bin/expect -f
+
+
+# ======================
+# 通用函数: 安全执行 spawn
+# ======================
+proc safe_spawn {cmd password retries} {
+    set attempt 1
+    while {$attempt <= $retries} {
+        puts "🔄 尝试第 $attempt 次执行: $cmd"
+        if {[catch {spawn {*}$cmd} result]} {
+            puts "❌ spawn 执行失败: $result"
+            incr attempt
+            after 2000
+            continue
+        }
+        expect {
+            "*assword:" { send "$password\r" }
+            timeout {
+                puts "⏰ SSH 超时，重试..."
+                incr attempt
+                after 2000
+                continue
+            }
+        }
+        expect {
+            eof {
+                return $expect_out(buffer)
+            }
+            timeout { puts "⏰ 执行超时，重试..."; incr attempt; after 2000 }
+        }
+    }
+    puts "❌ 多次重试失败，放弃: $cmd"
+    exit 1
+}
+
+
+# ======================
+# 配置
+# ======================
+set timeout 30
+set password "root"
+set user "root"
+set host "10.140.32.25"
+set local_path [lindex $argv 0]
+set remote_dir "/opt/spc-simulator-py"
+
+puts "\033\[31m ✅ 开始更新代码: spc-simulator-py \033\[0m"
+puts "✅ local_path 值为 = $local_path"
+after 5000
+
+
+# ======================
+# 1. 上传 $local_path 下的 .git 文件夹到服务器
+# ======================
+set scp_cmd "scp -o ConnectTimeout=10 $local_path/.git $user@$host:$remote_dir/"
+safe_spawn [list {*}$scp_cmd] $password 3
+puts "✅ 上传完成: $local_path 已上传到 $remote_dir"
+
+# ======================
+# 2. SSH 登录执行更新命令
+# ======================
+puts "\033\[33m ⚙️  开始远程执行 git 更新命令... \033\[0m"
+
+set remote_cmd "
+    cd $remote_dir && \
+    export http_proxy=http://10.140.32.80:7897 && \
+    export https_proxy=http://10.140.32.80:7897 && \
+    export all_proxy=socks5://10.140.32.80:7897 && \
+    echo '🌍 Proxy 已设置成功' && \
+    git fetch && \
+    git reset --hard origin/main && \
+    git pull && \
+    rm -rf $remote_dir/.git && \
+    echo '✅ 代码更新完成'
+"
+
+set ssh_cmd [list ssh -o ConnectTimeout=10 "$user@$host" "$remote_cmd"]
+safe_spawn $ssh_cmd $password 3
+
+puts "\033\[32m 🎉 所有操作完成！\033\[0m"
