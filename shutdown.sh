@@ -2,12 +2,6 @@
 
 set -Eeuo pipefail
 
-#if [ $# = 0 ]; then
-#  echo "Usage: $0 <env>"
-#  echo "Example: ./stop.sh dev"
-#  exit 1
-#fi
-
 APP_ENV="sv"
 APP_HOME=$(dirname "$0")
 APP_HOME=$(cd "$APP_HOME"; pwd)

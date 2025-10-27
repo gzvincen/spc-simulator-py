@@ -53,7 +53,7 @@ after 5000
 # ======================
 # 1. 上传 $local_path 下的 .git 文件夹到服务器
 # ======================
-set scp_cmd "scp -o ConnectTimeout=10 $local_path/.git $user@$host:$remote_dir/"
+set scp_cmd "scp -r -o ConnectTimeout=10 $local_path/.git $user@$host:$remote_dir/"
 safe_spawn [list {*}$scp_cmd] $password 3
 puts "✅ 上传完成: $local_path 已上传到 $remote_dir"
 

@@ -4,24 +4,10 @@ conda activate spc-simulator
 
 set -Eeuo pipefail
 
-#if [ $# = 0 ]; then
-#  echo "Usage: $0 <env>"
-#  echo "Example: ./start.sh dev"
-#  exit 1
-#fi
-
 APP_ENV="sv"
 APP_HOME=$(dirname "$0")
 APP_HOME=$(cd "$APP_HOME"; pwd)
 APP_PID_FILE="$APP_HOME/$APP_ENV.pid"
-#APP_LOG_DIR="$APP_HOME/logs"
-
-# 日志目录检查
-#if [ ! -d "$APP_LOG_DIR" ]; then
-#  mkdir -p "$APP_LOG_DIR"
-#fi
-
-#APP_LOG_FILE="$APP_LOG_DIR/${APP_ENV}.log"
 
 echo "🐍 Python Service SPC Simulator [$APP_ENV] Starting ... "
 
@@ -41,17 +27,6 @@ echo "⚠️  PYTHON_BIN [$PYTHON_BIN] "
 APP_LAUNCHER="$PYTHON_BIN -m app.main"
 
 # 启动并记录 PID
-#if nohup $APP_LAUNCHER > "$APP_LOG_FILE" 2>&1 < /dev/null &
-#then
-#  echo $! > "$APP_PID_FILE"
-#  sleep 1
-#  echo "✅ Service [$APP_ENV] STARTED (pid: $(cat $APP_PID_FILE))"
-#  echo "📜 Log: $APP_LOG_FILE"
-#else
-#  echo "❌ Failed to start service [$APP_ENV]"
-#  exit 1
-#fi
-
 read -ra nohupArgs < <(echo "$APP_LAUNCHER")
 if nohup "${nohupArgs[@]}" > /dev/null 2>&1 < /dev/null &
 then
