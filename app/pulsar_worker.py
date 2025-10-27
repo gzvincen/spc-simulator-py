@@ -9,6 +9,9 @@ from app.log import logger
 
 class PulsarWorker:
     def __init__(self):
+        logger.info("🚀 Pulsar Worker initializing...")
+        logger.info(f"🚀 Pulsar Service Url: {settings.PULSAR_SERVICE_URL}")
+        logger.info(f"🚀 SPC Simulator topic: {settings.SPC_SIMULATOR_TOPIC}")
         self.client = pulsar.Client(settings.PULSAR_SERVICE_URL)
 
         # 订阅 topic1
