@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+source /root/.bashrc
 conda activate spc-simulator
 
 set -Eeuo pipefail
