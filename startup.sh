@@ -25,6 +25,8 @@ fi
 PYTHON_BIN="${PYTHON_BIN:-python3}"
 echo "⚠️  PYTHON_BIN [$PYTHON_BIN] "
 # 项目启动命令（根据你的 main.py）
+cd "$APP_HOME"
+#export PYTHONPATH="$APP_HOME"
 APP_LAUNCHER="$PYTHON_BIN -m app.main"
 
 # 启动并记录 PID
