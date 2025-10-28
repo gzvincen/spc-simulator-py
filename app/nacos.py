@@ -17,6 +17,7 @@ import os
 import asyncio
 import yaml
 import re
+from app.log import logger
 
 
 async def get_config(data_id: str):
@@ -36,7 +37,7 @@ async def get_config(data_id: str):
     content = await config_client.get_config(
         ConfigParam(data_id=data_id, group="DEFAULT_GROUP")
     )
-    print("原始配置:\n", content)
+    logger.info(f"{data_id} 的 原始配置:\n", content)
 
     # 1️⃣ 替换 ${VAR:default} 形式的变量
     def substitute_env_vars(s):
@@ -53,28 +54,19 @@ async def get_config(data_id: str):
     # 2️⃣ 解析 YAML
     data = yaml.safe_load(replaced)
     # topic = data["getech"]["cim"]["mes"]["spc"]["topic"]
-    # print("\n替换后 topic:", topic)
+    # logger.info("\n替换后 topic:", topic)
     return data
 
 
 def get_spc_topic():
     config = asyncio.run(get_config("gom-std.yaml"))
     topic = config["getech"]["cim"]["mes"]["spc"]["topic"]
-    print("\n替换后 topic:", topic)
+    logger.info("\n替换后 topic:", topic)
     return topic
 
 
 def get_pulsar_url():
     config = asyncio.run(get_config("gmes-common.yaml"))
     pulsar_url = config["spring"]["messagebus"]["mq"]["brokers"]
-    print("\n替换后 pulsar_url:", pulsar_url)
+    logger.info("\n替换后 pulsar_url:", pulsar_url)
     return pulsar_url
-
-
-if __name__ == "__main__":
-    # asyncio.run(get_config("gom-std.yaml"))
-    topic_ = get_spc_topic()
-    print("最后拿到的 topic: ", topic_)
-    pulsar_url_ = get_pulsar_url()
-    print("最后拿到的 pulsar_url: ", pulsar_url_)
-    pass
