@@ -2,7 +2,7 @@
 
 ## 本地运行
 ```shell
-cd pulsar_fastapi_project
+cd spc-simulator-py
 pip install -r app/requirements.txt
 python -m app.main
 ```

@@ -5,18 +5,23 @@ import time
 import pulsar
 from app import settings
 from app.log import logger
+from app.nacos import get_spc_topic, get_pulsar_url
+
+
+pulsar_url_ = get_pulsar_url()
+spc_topic_ = get_spc_topic()
 
 
 class PulsarWorker:
     def __init__(self):
         logger.info("🚀 Pulsar Worker initializing...")
-        logger.info(f"🚀 Pulsar Service Url: {settings.PULSAR_SERVICE_URL}")
-        logger.info(f"🚀 SPC Simulator topic: {settings.SPC_SIMULATOR_TOPIC}")
-        self.client = pulsar.Client(settings.PULSAR_SERVICE_URL)
+        logger.info(f"🚀 Pulsar Service Url: {pulsar_url_}")
+        logger.info(f"🚀 SPC Simulator topic: {spc_topic_}")
+        self.client = pulsar.Client(pulsar_url_)
 
         # 订阅 topic1
         self.consumer = self.client.subscribe(
-            settings.SPC_SIMULATOR_TOPIC, subscription_name=settings.SUBSCRIPTION_NAME
+            spc_topic_, subscription_name=settings.SUBSCRIPTION_NAME
         )
 
         self.running = False
@@ -31,9 +36,7 @@ class PulsarWorker:
         self.running = True
         self.thread = threading.Thread(target=self._run, daemon=True)
         self.thread.start()
-        logger.info(
-            f"🚀 Pulsar Worker started, listening on: {settings.SPC_SIMULATOR_TOPIC}"
-        )
+        logger.info(f"🚀 Pulsar Worker started, listening on: {spc_topic_}")
 
     def _run(self):
         """核心循环：持续监听消息"""

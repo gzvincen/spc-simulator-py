@@ -27,6 +27,8 @@ echo "⚠️  PYTHON_BIN [$PYTHON_BIN] "
 
 # 项目启动命令（根据你的 main.py）
 export PYTHONPATH="$APP_HOME"
+NACOS_NAMESPACE="$APP_ENV" && export NACOS_NAMESPACE
+
 APP_LAUNCHER="$PYTHON_BIN -m app.main"
 
 # 启动并记录 PID
